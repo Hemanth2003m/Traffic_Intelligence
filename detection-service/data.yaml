@@ -1,0 +1,8 @@
+path: D:/SpringProjects/Final_Year_Proj/detection-service/dataset
+
+train: images
+val: images
+
+names:
+  0: Helmet
+  1: WithoutHelmet
