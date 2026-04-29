@@ -1,0 +1,16 @@
+com\hems\springsecDemo\service\ViolationService.class
+com\hems\springsecDemo\dao\RegisterRepo.class
+com\hems\springsecDemo\service\EmailService.class
+com\hems\springsecDemo\controller\RegisterController.class
+com\hems\springsecDemo\SpringsecDemoApplication.class
+com\hems\springsecDemo\model\Violation.class
+com\hems\springsecDemo\model\Register.class
+com\hems\springsecDemo\service\JwtService.class
+com\hems\springsecDemo\config\SecurityConfig.class
+com\hems\springsecDemo\controller\ViolationController.class
+com\hems\springsecDemo\dao\ViolationRepository.class
+com\hems\springsecDemo\controller\HelloController.class
+com\hems\springsecDemo\service\RegisterService.class
+com\hems\springsecDemo\config\JwtFilter.class
+com\hems\springsecDemo\model\UserPrincipal.class
+com\hems\springsecDemo\service\MyRegisterDetailsService.class
