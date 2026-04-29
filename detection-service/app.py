@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # 🔥 Load models
 vehicle_model = YOLO("yolov8n.pt")          # COCO model
-helmet_model = YOLO("models/best.pt")       # Your trained model
+helmet_model = YOLO("best.pt")       # Your trained model
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -174,8 +174,10 @@ def detect():
     print("📤 Sending:", data)
 
     # 🔥 ONLY FIX: Send to Spring Boot
+    SPRING_URL = os.getenv("SPRING_BOOT_URL", "http://localhost:8080")
+
     try:
-        response = requests.post("http://localhost:8080/violations", json={
+        response = requests.post(f"{SPRING_URL}/violations", json={
             "vehicleType": data["vehicleType"],
             "riderCount": data["riderCount"],
             "helmet": data["helmet"],
@@ -192,4 +194,4 @@ def detect():
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+   app.run(host="0.0.0.0", port=5000)
