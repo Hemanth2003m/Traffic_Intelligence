@@ -29,6 +29,12 @@ jobs:
         aws ecr-public get-login-password --region us-east-1 | \
         docker login --username AWS --password-stdin public.ecr.aws
 
+    - name: Build Spring Boot JAR
+      run: |
+        cd springsecDemo
+        chmod +x mvnw
+        ./mvnw clean package -DskipTests
+
     # 4️⃣ Build & Push Spring Boot
     - name: Build and Push Spring Boot
       run: |
