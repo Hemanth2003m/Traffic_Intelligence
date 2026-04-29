@@ -50,7 +50,7 @@ jobs:
     # 5️⃣ Build & Push Python (Detection Service)
     - name: Build and Push Python
       run: |
-        docker build -t detection-service ./python
+        docker build -t detection-service ./detection-service
         docker tag detection-service public.ecr.aws/f6k8c9z8/detection-service:latest
         docker push public.ecr.aws/f6k8c9z8/detection-service:latest
 
