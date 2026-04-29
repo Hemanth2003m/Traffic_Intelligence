@@ -60,7 +60,7 @@ jobs:
       with:
         host: ${{ vars.EC2_HOST }}
         username: ${{ vars.EC2_USER }}
-        key: ${{ vars.EC2_SSH_KEY }}
+        key: ${{ secrets.EC2_SSH_KEY }}
         script: |
 
           echo "Pulling latest images..."
