@@ -1,0 +1,13 @@
+# Lightweight Java 23 runtime
+FROM eclipse-temurin:23-jre
+
+WORKDIR /app
+
+# Copy JAR file
+COPY target/*.jar app.jar
+
+# Expose port
+EXPOSE 8080
+
+# Run Spring Boot
+ENTRYPOINT ["java", "-jar", "app.jar"]
