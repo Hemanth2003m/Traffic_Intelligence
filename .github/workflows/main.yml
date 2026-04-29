@@ -1,0 +1,73 @@
+name: CI/CD to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # 1️⃣ Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2️⃣ Configure AWS credentials
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    # 3️⃣ Login to Public ECR
+    - name: Login to ECR Public
+      run: |
+        aws ecr-public get-login-password --region us-east-1 | \
+        docker login --username AWS --password-stdin public.ecr.aws
+
+    # 4️⃣ Build & Push Spring Boot
+    - name: Build and Push Spring Boot
+      run: |
+        docker build -t springsecdemo ./springsecDemo
+        docker tag springsecdemo public.ecr.aws/f6k8c9z8/springsecdemo:latest
+        docker push public.ecr.aws/f6k8c9z8/springsecdemo:latest
+
+    # 5️⃣ Build & Push Python (Detection Service)
+    - name: Build and Push Python
+      run: |
+        docker build -t detection-service ./python
+        docker tag detection-service public.ecr.aws/f6k8c9z8/detection-service:latest
+        docker push public.ecr.aws/f6k8c9z8/detection-service:latest
+
+    # 6️⃣ Deploy to EC2 via SSH
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ vars.EC2_HOST }}
+        username: ${{ vars.EC2_USER }}
+        key: ${{ vars.EC2_SSH_KEY }}
+        script: |
+
+          echo "Pulling latest images..."
+          docker pull public.ecr.aws/f6k8c9z8/springsecdemo:latest
+          docker pull public.ecr.aws/f6k8c9z8/detection-service:latest
+
+          echo "Stopping old containers..."
+          docker stop springboot python || true
+          docker rm springboot python || true
+
+          echo "Starting Spring Boot..."
+          docker run -d --name springboot --network app-net -p 8080:8080 \
+          -v /home/ubuntu/shared-uploads:/app/uploads \
+          public.ecr.aws/f6k8c9z8/springsecdemo:latest
+
+          echo "Starting Python service..."
+          docker run -d --name python --network app-net -p 5000:5000 \
+          -v /home/ubuntu/shared-uploads:/app/uploads \
+          -v /home/ubuntu/models:/app/models \
+          -e SPRING_BOOT_URL=http://springboot:8080 \
+          public.ecr.aws/f6k8c9z8/detection-service:latest
